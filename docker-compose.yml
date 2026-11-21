@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-perfectjson}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-perfectpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-perfectjson}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-perfectjson} -d ${POSTGRES_DB:-perfectjson}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-perfectjson}:${POSTGRES_PASSWORD:-perfectpassword}@postgres:5432/${POSTGRES_DB:-perfectjson}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - api_data:/app/data
+    restart: unless-stopped
+
+  bot:
+    build: .
+    command: python -m app.bot.main
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-perfectjson}:${POSTGRES_PASSWORD:-perfectpassword}@postgres:5432/${POSTGRES_DB:-perfectjson}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Healthcheck из Dockerfile бьёт в :8000 (uvicorn) — в боте его нет;
+    # поллинг жив, пока жив процесс: статус проверяем по логам/метрикам.
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  api_data:

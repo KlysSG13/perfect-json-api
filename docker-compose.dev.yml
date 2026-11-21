@@ -1,0 +1,37 @@
+# Дополнительные сервисы для разработки: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "127.0.0.1:6379:6379"
+    restart: unless-stopped
+
+  api:
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      JOBS_ENABLED: "true"
+      WEBHOOKS_ENABLED: "true"
+      ENABLE_METRICS: "true"
+      METRICS_KEY: dev-metrics-key
+      LOG_FORMAT: json
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  bot:
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redisdata:

@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Lint (pyflakes)
+        run: python -m pyflakes app tests scripts/healthcheck.py scripts/load_test.py
+      - name: Compile all
+        run: python -m compileall -q app tests scripts
+      - name: Tests with coverage (offline)
+        run: pytest -q --cov=app --cov-report=term-missing --cov-report=xml
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+          if-no-files-found: ignore
+
+  migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Alembic upgrade on clean DB (baseline → head)
+        env:
+          DATABASE_URL: sqlite+aiosqlite:////tmp/ci_clean.db
+        run: |
+          alembic upgrade 0001_baseline
+          alembic upgrade head
+      - name: Alembic downgrade check
+        env:
+          DATABASE_URL: sqlite+aiosqlite:////tmp/ci_clean.db
+        run: alembic downgrade 0001_baseline
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: perfectjson_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Integration tests (Postgres + Redis)
+        env:
+          INTEGRATION_POSTGRES: "1"
+          INTEGRATION_REDIS: "1"
+          INTEGRATION_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/perfectjson_test
+          INTEGRATION_REDIS_URL: redis://localhost:6379/1
+          PYTHON: python
+        run: pytest tests/integration -q -m integration -o addopts=""
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -t perfectjson-ci:${{ github.sha }} .
+      - name: Smoke check image (python import)
+        run: docker run --rm --entrypoint python perfectjson-ci:${{ github.sha }} -c "import app.api.main; print('image ok')"
+
+  audit:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # мягкий режим: не блокирует релиз
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: pip-audit
+        run: |
+          python -m pip install --upgrade pip pip-audit
+          pip-audit -r requirements.txt --skip-editable || echo "pip-audit findings (non-blocking)"

@@ -1,0 +1,32 @@
+[project]
+name = "perfect-json"
+version = "1.0.0"
+description = "Perfect JSON API — валидный JSON из любого хаоса: API-first сервис с автопочинкой LLM-ответов"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: требует живые Postgres/Redis (INTEGRATION_POSTGRES=1 / INTEGRATION_REDIS=1)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",
+    "B008",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
