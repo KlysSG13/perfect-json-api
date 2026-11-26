@@ -10,6 +10,8 @@ Production-ready B2B SaaS: API-first сервис, который принима
 
 Проверено (Python 3.14.7, macOS): **271 офлайн-тест — все зелёные** (`pytest -q` → `271 passed`, без Telegram/Stripe/LLM/Redis/Postgres; интеграционные deselect по маркеру), `ruff`/`pyflakes`/`compileall` — чисто, `make coverage` собирает отчёт, миграции применяются к чистой базе и к базам 2.0/3.0 с данными (тесты), eval fake — 60 кейсов, schema_pass 1.0. Живые проверки (Stars-оплата, `make verify-docker`, Postgres/Redis-интеграция, live LLM) не выполнялись автоматически — есть `make verify-docker`, `INTEGRATION_POSTGRES/REDIS=1` и чеклисты ([RELEASE_CHECKLIST](docs/RELEASE_CHECKLIST.md), [Stars](docs/TELEGRAM_STARS_MANUAL_CHECKLIST.md)).
 
+**Статус: код готов к продакшену, живой инстанс не развёрнут.** Сервер под сервис я не арендую — это постоянные расходы, а бюджета на них сейчас нет. Всё для подъёма в репозитории (`docker compose`, миграции, бэкап-скрипт, [docs/OPERATIONS.md](docs/OPERATIONS.md)): на чистом VPS сервис поднимается за ~15–30 минут — как только появится для этого причина (клиент, заказ).
+
 ---
 
 ## 1. Что это и ключевая ценность
