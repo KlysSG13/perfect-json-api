@@ -1,0 +1,51 @@
+[
+  {
+    "name": "date-iso-ru",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}, "note": {"type": ["string", "null"]}}},
+    "raw_text": "оплата нужна до 2026-12-01, счёт от поставщика",
+    "expected": {"due_date": "2026-12-01", "note": "оплата"},
+    "expected_fields": {"due_date": "2026-12-01"}
+  },
+  {
+    "name": "date-dot-ru",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}}},
+    "raw_text": "срок: 05.03.2027 без опозданий",
+    "expected": {"due_date": "05.03.2027"},
+    "expected_fields": {"due_date": "05.03.2027"}
+  },
+  {
+    "name": "date-textual-genitive",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}}},
+    "raw_text": "дедлайн 21 ноября 2026, сдача отчёта",
+    "expected": {"due_date": "21 ноября 2026"},
+    "expected_fields": {"due_date": "21 ноября 2026"}
+  },
+  {
+    "name": "date-slash-ambiguous",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}}},
+    "raw_text": "платёж 03/04 — уточни год у менеджера",
+    "expected": {"due_date": "03/04"},
+    "expected_fields": {"due_date": "03/04"}
+  },
+  {
+    "name": "date-relative",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}}},
+    "raw_text": "нужно успеть до конца недели, желательно к пятнице",
+    "expected": {"due_date": "к пятнице"},
+    "expected_fields": {"due_date": "к пятнице"}
+  },
+  {
+    "name": "date-range",
+    "schema": {"type": "object", "properties": {"period_start": {"type": ["string", "null"]}, "period_end": {"type": ["string", "null"]}}},
+    "raw_text": "период оказания услуг: с 01.02.2026 по 28.02.2026",
+    "expected": {"period_start": "01.02.2026", "period_end": "28.02.2026"},
+    "expected_fields": {"period_start": "01.02.2026", "period_end": "28.02.2026"}
+  },
+  {
+    "name": "date-en-textual",
+    "schema": {"type": "object", "properties": {"due_date": {"type": ["string", "null"]}}},
+    "raw_text": "The report is due 3 December 2025, no extensions.",
+    "expected": {"due_date": "3 December 2025"},
+    "expected_fields": {"due_date": "3 December 2025"}
+  }
+]

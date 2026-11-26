@@ -1,0 +1,37 @@
+[
+  {
+    "name": "contra-two-prices",
+    "preset": "product_card_v1",
+    "raw_text": "Кофемолка BUONO: в письме цена 4990, в прайсе 5490, клиенту сказали 4990. Артикул BUN-01.",
+    "expected": {"name": "Кофемолка BUONO", "price": 4990, "currency": null, "sku": "BUN-01", "attributes": {"price_in_price_list": 5490, "quoted_to_client": 4990}, "description": null, "tags": null},
+    "expected_fields": {"price": 4990, "sku": "BUN-01"}
+  },
+  {
+    "name": "contra-dates",
+    "preset": "lead_v1",
+    "raw_text": "Старт в марте, но менеджер сказал в апреле; бюджет сначала 200к, потом уточнили 150к. Анна, Восток Логистика.",
+    "expected": {"name": "Анна", "company": "Восток Логистика", "budget": "150к", "need": null, "timeline": "апрель", "source": null, "priority": null, "contact": null},
+    "expected_fields": {"name": "Анна", "budget": "150к"}
+  },
+  {
+    "name": "contra-quantity",
+    "preset": "invoice_v1",
+    "raw_text": "Заказ: 10 лицензий, но потом уменьшили до 7. Счёт выставлен на 7 × 3000 руб. Оплата в течение 5 дней.",
+    "expected": {"currency": "RUB", "total_amount": 21000, "due_date": "в течение 5 дней", "issuer": null, "customer": null, "line_items": [{"description": "лицензии", "quantity": 7, "unit_price": 3000}], "notes": "изначально 10 лицензий, уменьшено до 7", "payment_instructions": null},
+    "expected_fields": {"currency": "RUB", "total_amount": 21000}
+  },
+  {
+    "name": "contra-contact-vs-note",
+    "preset": "lead_v1",
+    "raw_text": "Пишите на sales@corp.io (примечание: ящик отдела, не личный). Лид: Игорь, тема — миграция данных.",
+    "expected": {"name": "Игорь", "company": null, "contact": {"email": "sales@corp.io", "note": "ящик отдела"}, "budget": null, "need": "миграция данных", "timeline": null, "source": null, "priority": null},
+    "expected_fields": {"name": "Игорь", "need": "миграция данных"}
+  },
+  {
+    "name": "contra-status-conflict",
+    "schema": {"type": "object", "properties": {"order_status": {"type": ["string", "null"]}, "order_id": {"type": ["string", "number", "null"]}}},
+    "raw_text": "Заказ 4512: в CRM «доставлен», клиент говорит «не получал». Приоритет — разобраться.",
+    "expected": {"order_id": "4512", "order_status": "conflict: CRM=доставлен, клиент=не получал"},
+    "expected_fields": {"order_id": "4512"}
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "name": "invoice-basic-ru",
+    "preset": "invoice_v1",
+    "raw_text": "СЧЁТ №128 от 15.05.2026. ООО «Ромашка», ИНН 7701234567, выставляет ИП Сидорову А.А. Позиции: настройка сервера 2 шт × 15000 руб; консалтинг 5 ч × 4000 руб. Итого 50000 руб. Оплата до 30.05.2026. Реквизиты: р/с 40817810099990004444, банк Альфа.",
+    "expected": {
+      "currency": "RUB",
+      "total_amount": 50000,
+      "due_date": "30.05.2026",
+      "issuer": {"name": "ООО «Ромашка»", "inn": "7701234567"},
+      "customer": {"name": "ИП Сидоров А.А."},
+      "line_items": [
+        {"description": "настройка сервера", "quantity": 2, "unit_price": 15000},
+        {"description": "консалтинг", "quantity": 5, "unit_price": 4000}
+      ],
+      "notes": "СЧЁТ №128 от 15.05.2026",
+      "payment_instructions": "р/с 40817810099990004444, банк Альфа"
+    },
+    "expected_fields": {"currency": "RUB", "total_amount": 50000}
+  },
+  {
+    "name": "invoice-email-chaos",
+    "preset": "invoice_v1",
+    "raw_text": "Привет! счёт от подрядчика: разработка лендинга 85000 руб + поддержка 12000 руб в месяц, итого выходит 97000. Оплатить просили до 20 июня 2026, назначение платежа «за разработку». Пишут с почты billing@studio.io",
+    "expected": {
+      "currency": "RUB",
+      "total_amount": 97000,
+      "due_date": "20 июня 2026",
+      "issuer": {"email": "billing@studio.io"},
+      "customer": null,
+      "line_items": [
+        {"description": "разработка лендинга", "amount": 85000},
+        {"description": "поддержка", "amount": 12000, "period": "в месяц"}
+      ],
+      "notes": "назначение платежа «за разработку»",
+      "payment_instructions": null
+    },
+    "expected_fields": {"currency": "RUB", "total_amount": 97000}
+  },
+  {
+    "name": "invoice-usd",
+    "preset": "invoice_v1",
+    "raw_text": "INVOICE #2026-07. Acme Corp bills Blue LLC: license $1,200.00, support $300.50. Total $1,500.50. Due Jul 31, 2026. Wire to acct 555123, SWIFT ACMEUS33.",
+    "expected": {
+      "currency": "USD",
+      "total_amount": 1500.5,
+      "due_date": "Jul 31, 2026",
+      "issuer": {"name": "Acme Corp"},
+      "customer": {"name": "Blue LLC"},
+      "line_items": [
+        {"description": "license", "total": 1200.0},
+        {"description": "support", "total": 300.5}
+      ],
+      "notes": "INVOICE #2026-07",
+      "payment_instructions": "Wire to acct 555123, SWIFT ACMEUS33"
+    },
+    "expected_fields": {"currency": "USD", "total_amount": 1500.5}
+  },
+  {
+    "name": "invoice-kp",
+    "preset": "invoice_v1",
+    "raw_text": "Коммерческое предложение: поставка 10 лицензий ПО «Склад» по 7 200,00 ₽ каждая, монтаж 15 000 ₽. Сумма 87 000 ₽ с НДС. Срок оплаты — 5 рабочих дней с даты подписания. Поставщик: ТехноПром, тел. +7 495 111-22-33.",
+    "expected": {
+      "currency": "RUB",
+      "total_amount": 87000,
+      "due_date": "5 рабочих дней с даты подписания",
+      "issuer": {"name": "ТехноПром", "phone": "+7 495 111-22-33"},
+      "customer": null,
+      "line_items": [
+        {"description": "лицензии ПО «Склад»", "quantity": 10, "unit_price": 7200},
+        {"description": "монтаж", "total": 15000}
+      ],
+      "notes": "87 000 ₽ с НДС",
+      "payment_instructions": null
+    },
+    "expected_fields": {"currency": "RUB", "total_amount": 87000}
+  },
+  {
+    "name": "invoice-missing-fields",
+    "preset": "invoice_v1",
+    "raw_text": "счёт: хостинг на год, 24 000 руб, больше ничего не написали",
+    "expected": {
+      "currency": "RUB",
+      "total_amount": 24000,
+      "due_date": null,
+      "issuer": null,
+      "customer": null,
+      "line_items": [{"description": "хостинг на год", "total": 24000}],
+      "notes": null,
+      "payment_instructions": null
+    },
+    "expected_fields": {"currency": "RUB", "total_amount": 24000}
+  }
+]

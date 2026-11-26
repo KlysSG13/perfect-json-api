@@ -1,0 +1,78 @@
+[
+  {
+    "name": "resume-full-ru",
+    "preset": "resume_v1",
+    "raw_text": "Резюме: Козлов Дмитрий Сергеевич, Python-разработчик. Стек: Python, FastAPI, PostgreSQL, Docker, Redis. Опыт: ООО «Финтех» 2021–2024, ведущий разработчик, платёжный шлюз; «Стартап Лаб» 2019–2021, бэкенд-разработчик. Образование: МГТУ, ПО ВТ, 2019. Почта: d.kozlov@mail.ru, тел +7 903 111-22-33, github.com/dkozlov.",
+    "expected": {
+      "full_name": "Козлов Дмитрий Сергеевич",
+      "role": "Python-разработчик",
+      "skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Redis"],
+      "experience": [
+        {"company": "ООО «Финтех»", "position": "ведущий разработчик", "start_date": "2021", "end_date": "2024", "description": "платёжный шлюз"},
+        {"company": "Стартап Лаб", "position": "бэкенд-разработчик", "start_date": "2019", "end_date": "2021"}
+      ],
+      "education": [{"institution": "МГТУ", "degree": "ПО ВТ", "year": 2019}],
+      "contact": {"email": "d.kozlov@mail.ru", "phone": "+7 903 111-22-33", "github": "github.com/dkozlov"}
+    },
+    "expected_fields": {"full_name": "Козлов Дмитрий Сергеевич", "role": "Python-разработчик"}
+  },
+  {
+    "name": "resume-linkedin-en",
+    "preset": "resume_v1",
+    "raw_text": "Jane Doe — Data Engineer at Flux Co (2022–present), previously Analytics at Nova (2020–2022). Skills: SQL, Airflow, dbt, Spark, Python. MSc Data Science, TU Delft, 2020. jane.doe@flux.io | linkedin.com/in/janedoe",
+    "expected": {
+      "full_name": "Jane Doe",
+      "role": "Data Engineer",
+      "skills": ["SQL", "Airflow", "dbt", "Spark", "Python"],
+      "experience": [
+        {"company": "Flux Co", "position": "Data Engineer", "start_date": "2022", "end_date": "present"},
+        {"company": "Nova", "position": "Analytics", "start_date": "2020", "end_date": "2022"}
+      ],
+      "education": [{"institution": "TU Delft", "degree": "MSc Data Science", "year": 2020}],
+      "contact": {"email": "jane.doe@flux.io", "linkedin": "linkedin.com/in/janedoe"}
+    },
+    "expected_fields": {"full_name": "Jane Doe"}
+  },
+  {
+    "name": "resume-telegram-bio",
+    "preset": "resume_v1",
+    "raw_text": "Максим, 2 года пишу на Go, до этого был QA. Учился на курсах Яндекса. Живу в Казани. Телеграм @maxdev",
+    "expected": {
+      "full_name": "Максим",
+      "role": "Go-разработчик",
+      "skills": ["Go"],
+      "experience": [{"position": "QA", "description": "до этого"}],
+      "education": [{"institution": "курсы Яндекса"}],
+      "contact": {"telegram": "@maxdev", "city": "Казань"}
+    },
+    "expected_fields": {"full_name": "Максим"}
+  },
+  {
+    "name": "resume-pdf-extract",
+    "preset": "resume_v1",
+    "raw_text": "ОПЫТ: Руководитель отдела продаж, «Северсталь-Сбыт», март 2018 — настоящее время. Команда 12 человек, рост продаж +40%. ОБРАЗОВАНИЕ: ВШЭ, менеджмент, 2012–2016. НАВЫКИ: переговоры, CRM Битрикс, Excel. Иванова Ольга, olga.i@corp.ru",
+    "expected": {
+      "full_name": "Иванова Ольга",
+      "role": "Руководитель отдела продаж",
+      "skills": ["переговоры", "CRM Битрикс", "Excel"],
+      "experience": [{"company": "Северсталь-Сбыт", "position": "Руководитель отдела продаж", "start_date": "март 2018", "end_date": "настоящее время", "description": "Команда 12 человек, рост продаж +40%"}],
+      "education": [{"institution": "ВШЭ", "degree": "менеджмент", "year": "2012–2016"}],
+      "contact": {"email": "olga.i@corp.ru"}
+    },
+    "expected_fields": {"role": "Руководитель отдела продаж"}
+  },
+  {
+    "name": "resume-no-contact",
+    "preset": "resume_v1",
+    "raw_text": "Студент последнего курса, знает Java и немного Kotlin, делал лабы и пет-проекты, хочет стажировку",
+    "expected": {
+      "full_name": "Студент последнего курса",
+      "role": "стажёр-разработчик",
+      "skills": ["Java", "Kotlin"],
+      "experience": [],
+      "education": [],
+      "contact": null
+    },
+    "expected_fields": {"skills": ["Java", "Kotlin"]}
+  }
+]

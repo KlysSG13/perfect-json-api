@@ -1,0 +1,82 @@
+[
+  {
+    "name": "lead-telegram",
+    "preset": "lead_v1",
+    "raw_text": "Привет! Меня зовут Аня, компания «Смарт Логистик». Нужен бот для заявок перевозок, бюджет до 400 тыс, стартовать хотим в марте. Пишите на aya@smartlog.ru, это срочно",
+    "expected": {
+      "name": "Аня",
+      "company": "Смарт Логистик",
+      "contact": {"email": "aya@smartlog.ru"},
+      "budget": "до 400 тыс",
+      "need": "бот для заявок перевозок",
+      "timeline": "в марте",
+      "source": null,
+      "priority": "high"
+    },
+    "expected_fields": {"name": "Аня", "company": "Смарт Логистик"}
+  },
+  {
+    "name": "lead-crm-note",
+    "preset": "lead_v1",
+    "raw_text": "Звонил Сергей из Атлас Дев, спрашивал про интеграцию с 1С и стоимость внедрения около 1,2 млн. Решение хотят принять до конца года, контакт +7 916 555-77-88. Тёплый.",
+    "expected": {
+      "name": "Сергей",
+      "company": "Атлас Дев",
+      "contact": {"phone": "+7 916 555-77-88"},
+      "budget": "около 1,2 млн",
+      "need": "интеграция с 1С",
+      "timeline": "до конца года",
+      "source": "звонок",
+      "priority": "medium"
+    },
+    "expected_fields": {"name": "Сергей", "company": "Атлас Дев"}
+  },
+  {
+    "name": "lead-form-submission",
+    "preset": "lead_v1",
+    "raw_text": "Имя: Дмитрий. Почта: d.ivanov@example.com. Интересует парсинг резюме, бюджет небольшой — до 100к. Когда: после Нового года. Пришёл с хабра.",
+    "expected": {
+      "name": "Дмитрий",
+      "company": null,
+      "contact": {"email": "d.ivanov@example.com"},
+      "budget": "до 100к",
+      "need": "парсинг резюме",
+      "timeline": "после Нового года",
+      "source": "хабр",
+      "priority": "low"
+    },
+    "expected_fields": {"name": "Дмитрий", "source": "хабр"}
+  },
+  {
+    "name": "lead-urgent-referral",
+    "preset": "lead_v1",
+    "raw_text": "Это Марина, нас передал Артём. Нужен срочно дашборд к пятнице (!!), сумма любая в разумных пределах, марина_опт телеграм",
+    "expected": {
+      "name": "Марина",
+      "company": null,
+      "contact": {"telegram": "марина_опт"},
+      "budget": "любая в разумных пределах",
+      "need": "дашборд",
+      "timeline": "к пятнице",
+      "source": "реферал от Артёма",
+      "priority": "high"
+    },
+    "expected_fields": {"name": "Марина", "priority": "high"}
+  },
+  {
+    "name": "lead-sparse",
+    "preset": "lead_v1",
+    "raw_text": "заинтересовался вашим API, как купить?",
+    "expected": {
+      "name": "неизвестный интересент",
+      "company": null,
+      "contact": null,
+      "budget": null,
+      "need": "покупка доступа к API",
+      "timeline": null,
+      "source": null,
+      "priority": null
+    },
+    "expected_fields": {"need": "покупка доступа к API"}
+  }
+]

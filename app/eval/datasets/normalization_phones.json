@@ -1,0 +1,37 @@
+[
+  {
+    "name": "phone-ru-mobile-full",
+    "schema": {"type": "object", "properties": {"phone": {"type": ["string", "null"]}}},
+    "raw_text": "контакт: +7 (912) 345-67-89, звонить до 18:00",
+    "expected": {"phone": "+7 (912) 345-67-89"},
+    "expected_fields": {"phone": "+7 (912) 345-67-89"}
+  },
+  {
+    "name": "phone-ru-eight",
+    "schema": {"type": "object", "properties": {"phone": {"type": ["string", "null"]}}},
+    "raw_text": "тел. 88005553535, горячая линия",
+    "expected": {"phone": "88005553535"},
+    "expected_fields": {"phone": "88005553535"}
+  },
+  {
+    "name": "phone-ten-digits",
+    "schema": {"type": "object", "properties": {"phone": {"type": ["string", "null"]}}},
+    "raw_text": "сотка 9031234567, лучше писать в вотсап",
+    "expected": {"phone": "9031234567"},
+    "expected_fields": {"phone": "9031234567"}
+  },
+  {
+    "name": "phone-multiple",
+    "schema": {"type": "object", "properties": {"phone": {"type": ["string", "null"]}, "alt_phone": {"type": ["string", "null"]}}},
+    "raw_text": "телефоны: +7 495 111-22-33 (офис) и +7 921 987-65-43 (моб)",
+    "expected": {"phone": "+7 495 111-22-33", "alt_phone": "+7 921 987-65-43"},
+    "expected_fields": {"phone": "+7 495 111-22-33"}
+  },
+  {
+    "name": "phone-not-a-phone",
+    "schema": {"type": "object", "properties": {"phone": {"type": ["string", "null"]}}},
+    "raw_text": "свяжемся в телеграме, номер не даю",
+    "expected": {"phone": null},
+    "expected_fields": {"phone": null}
+  }
+]

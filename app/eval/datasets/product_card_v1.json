@@ -1,0 +1,77 @@
+[
+  {
+    "name": "product-sneaker",
+    "preset": "product_card_v1",
+    "raw_text": "Кроссовки беговые AeroRun 2.0, мужские, 42р, цвет чёрный/лайм. Амортизация Boost-подобная, дышащая сетка. Цена 8 990 ₽, артикул AR2-BLK-42. Теги: бег, лето, асфальт.",
+    "expected": {
+      "name": "Кроссовки беговые AeroRun 2.0",
+      "description": "Мужские беговые кроссовки, амортизация Boost-подобная, дышащая сетка",
+      "price": 8990,
+      "currency": "RUB",
+      "sku": "AR2-BLK-42",
+      "attributes": {"пол": "мужской", "размер": "42", "цвет": "чёрный/лайм"},
+      "tags": ["бег", "лето", "асфальт"]
+    },
+    "expected_fields": {"price": 8990, "sku": "AR2-BLK-42"}
+  },
+  {
+    "name": "product-marketplace-csv",
+    "preset": "product_card_v1",
+    "raw_text": "name;price;sku\nЧайник электрический Steel 1.7л;2499.00;KET-ST17;цвет стальной, мощность 2200Вт, объём 1.7 л",
+    "expected": {
+      "name": "Чайник электрический Steel 1.7л",
+      "description": "Электрический чайник, мощность 2200 Вт, объём 1.7 л",
+      "price": 2499.0,
+      "currency": null,
+      "sku": "KET-ST17",
+      "attributes": {"цвет": "стальной", "мощность": "2200Вт", "объём": "1.7 л"},
+      "tags": null
+    },
+    "expected_fields": {"price": 2499.0, "sku": "KET-ST17"}
+  },
+  {
+    "name": "product-no-price",
+    "preset": "product_card_v1",
+    "raw_text": "Мерч: футболка «DevOps как сервис», принт на спине, размеры S–XXL, пришлём каталог по запросу",
+    "expected": {
+      "name": "Футболка «DevOps как сервис»",
+      "description": "Мерч с принтом на спине, размеры S–XXL",
+      "price": null,
+      "currency": null,
+      "sku": null,
+      "attributes": {"размеры": "S–XXL", "принт": "на спине"},
+      "tags": ["мерч"]
+    },
+    "expected_fields": {"name": "Футболка «DevOps как сервис»"}
+  },
+  {
+    "name": "product-b2b-equipment",
+    "preset": "product_card_v1",
+    "raw_text": "Стеллаж складской MS Pro 2000×1000×500, 5 ярусов, нагрузка 350 кг/ярус. Цена с НДС 21 400,00 руб. Код: MS2000-5U. Бренд МетСтрой.",
+    "expected": {
+      "name": "Стеллаж складской MS Pro 2000×1000×500",
+      "description": "Складской стеллаж, 5 ярусов, нагрузка 350 кг/ярус",
+      "price": 21400,
+      "currency": "RUB",
+      "sku": "MS2000-5U",
+      "attributes": {"бренд": "МетСтрой", "ярусы": 5, "нагрузка": "350 кг/ярус"},
+      "tags": null
+    },
+    "expected_fields": {"price": 21400, "sku": "MS2000-5U"}
+  },
+  {
+    "name": "product-digital-subscription",
+    "preset": "product_card_v1",
+    "raw_text": "Подписка Perfect JSON API, тариф Growth: 5000 кредитов за $39 в месяц, без роуллов, отмена в любой момент. Код тарифа — growth-monthly.",
+    "expected": {
+      "name": "Подписка Perfect JSON API, тариф Growth",
+      "description": "5000 кредитов в месяц, без роуллов, отмена в любой момент",
+      "price": 39,
+      "currency": "USD",
+      "sku": "growth-monthly",
+      "attributes": {"кредиты": 5000, "период": "месяц"},
+      "tags": ["подписка"]
+    },
+    "expected_fields": {"price": 39, "currency": "USD"}
+  }
+]

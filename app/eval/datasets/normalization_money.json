@@ -1,0 +1,51 @@
+[
+  {
+    "name": "currency-rub-symbol",
+    "schema": {"type": "object", "properties": {"currency": {"type": ["string", "null"]}, "total_amount": {"type": ["number", "string", "null"]}}},
+    "raw_text": "итого к оплате 12 400 ₽, включая доставку",
+    "expected": {"currency": "₽", "total_amount": "12 400"},
+    "expected_fields": {"currency": "₽"}
+  },
+  {
+    "name": "currency-usd-code",
+    "schema": {"type": "object", "properties": {"currency": {"type": ["string", "null"]}, "total_amount": {"type": ["number", "string", "null"]}}},
+    "raw_text": "Total: USD 1,250.00 payable by wire",
+    "expected": {"currency": "USD", "total_amount": "1,250.00"},
+    "expected_fields": {"currency": "USD"}
+  },
+  {
+    "name": "currency-eur-words",
+    "schema": {"type": "object", "properties": {"currency": {"type": ["string", "null"]}}},
+    "raw_text": "цена 300 евро за лицензию, торг возможен",
+    "expected": {"currency": "евро"},
+    "expected_fields": {"currency": "евро"}
+  },
+  {
+    "name": "amount-spaced-thousands",
+    "schema": {"type": "object", "properties": {"total_amount": {"type": ["number", "string", "null"]}}},
+    "raw_text": "сумма договора 1 950 000 руб., НДС включён",
+    "expected": {"total_amount": "1 950 000"},
+    "expected_fields": {}
+  },
+  {
+    "name": "amount-comma-decimal",
+    "schema": {"type": "object", "properties": {"unit_price": {"type": ["number", "string", "null"]}}},
+    "raw_text": "цена за штуку 749,90 руб",
+    "expected": {"unit_price": "749,90"},
+    "expected_fields": {}
+  },
+  {
+    "name": "amount-mixed-separators",
+    "schema": {"type": "object", "properties": {"total_amount": {"type": ["number", "string", "null"]}}},
+    "raw_text": "Invoice total is 2,450.50 USD; wire fees excluded",
+    "expected": {"total_amount": "2,450.50"},
+    "expected_fields": {}
+  },
+  {
+    "name": "amount-negative",
+    "schema": {"type": "object", "properties": {"adjustment": {"type": ["number", "string", "null"]}}},
+    "raw_text": "корректировка прошлого счёта: -3 200 руб (переплата)",
+    "expected": {"adjustment": "-3 200"},
+    "expected_fields": {}
+  }
+]

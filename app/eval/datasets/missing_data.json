@@ -1,0 +1,37 @@
+[
+  {
+    "name": "missing-only-intent",
+    "preset": "lead_v1",
+    "raw_text": "интересует интеграция с телефонией, больше ничего не написал",
+    "expected": {"name": "неизвестный", "company": null, "contact": null, "budget": null, "need": "интеграция с телефонией", "timeline": null, "source": null, "priority": null},
+    "expected_fields": {"need": "интеграция с телефонией"}
+  },
+  {
+    "name": "missing-no-price",
+    "preset": "product_card_v1",
+    "raw_text": "Джемезия фильтр для воды, модель J-200, в наличии 3 шт, цену уточняйте",
+    "expected": {"name": "Джемезия фильтр для воды J-200", "description": "модель J-200, в наличии 3 шт", "price": null, "currency": null, "sku": "J-200", "attributes": {"stock": 3}, "tags": null},
+    "expected_fields": {"sku": "J-200"}
+  },
+  {
+    "name": "missing-garbled-ocr",
+    "preset": "invoice_v1",
+    "raw_text": "СЧЁТ №4… от [размыто] поставщик ООО «Т??н» сумма 8?000 руб позиция: достав??а",
+    "expected": {"currency": "RUB", "total_amount": "8?000", "due_date": null, "issuer": {"name": "ООО «Т??н»"}, "customer": null, "line_items": [{"description": "достав??а"}], "notes": "данные частично неразборчивы", "payment_instructions": null},
+    "expected_fields": {"currency": "RUB"}
+  },
+  {
+    "name": "missing-empty-sections",
+    "preset": "resume_v1",
+    "raw_text": "Резюме: Пак Дмитрий, junior QA. Опыта нет, обучения не было, навыки не указал.",
+    "expected": {"full_name": "Пак Дмитрий", "role": "junior QA", "skills": [], "experience": [], "education": [], "contact": null},
+    "expected_fields": {"full_name": "Пак Дмитрий", "role": "junior QA"}
+  },
+  {
+    "name": "missing-language-mix",
+    "preset": "universal_v1",
+    "raw_text": "delivery address: не указан; contact phone: unknown; заказ 99 на вторник",
+    "expected": {"order": "99", "delivery_date": "вторник", "address": null, "phone": null},
+    "expected_fields": {"order": "99"}
+  }
+]
