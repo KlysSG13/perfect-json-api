@@ -2,13 +2,13 @@
 
 Production-ready B2B SaaS: API-first сервис, который принимает сырой текст, файлы и извлечённый контент и возвращает **строго валидный JSON по JSON Schema Draft 2020-12** — с нормализацией, валидацией и автопочинкой через повторные запросы к LLM.
 
-Версия **3.1.0 «release stabilization»**: трансформации в боте по умолчанию **отключены** (публичный бот не тратит внутренний баланс), **ротация ключа сохраняет баланс** и блокируется активными холдами, оплата Telegram Stars зачисляется по **снапшоту инвойса** (смена цены/деактивация пакета не ломает оплату; несоответствия → `problem` без зачисления), stale-платежи алертятся, неоплаченные инвойсы чистятся CLI, production-гварды конфигурации (подтверждение цен Stars, запрет опасного демо), coverage + интеграционные тесты Postgres/Redis в CI, релизные чеклисты и support-runbook.
+Версия **3.4.0 «финальный аудит перед клиентами»** (полная история — [docs/CHANGELOG.md](docs/CHANGELOG.md)). Поверх базы 3.0/3.1 (биллинг с холдами, ротация ключа без потери денег, Stars по снапшоту инвойса, production-гварды конфигурации) добавлено в 3.2–3.4: бот сам обрабатывает текст и файлы за кредиты **личного ключа** клиента с мгновенным ack приёма файла; главное меню reply-клавиатурой и переписанные `/start`/`/help`; понятная платежка — баланс с холдами («в обработке → доступно»), inline-кнопка «Пополнить» при нехватке, большой результат приходит файлом следующим сообщением; цены Stars утверждены вместо плейсхолдеров; находки финального аудита закрыты (кнопки меню не съедают дневной лимит, кап стоимости поднят до 120 кредитов — документы до ~50k символов проходят, меню и команды сбрасывают висящее FSM-состояние, fallback не спамит в группах); бэкапы прод-БД по cron (pg_dump → gzip, ротация 14 дней).
 
 - **Стек:** Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2 (async), SQLite/PostgreSQL(+asyncpg), Redis (опц.), aiogram 3, любой OpenAI-совместимый LLM, Alembic.
 - **Монетизация:** usage-based кредиты с холдами; админ-API/CLI для управления; **платежи только Telegram Stars** (единственный метод; Stripe и Fake-checkout отключены и возвращают 410).
 - **Telegram-бот:** self-serve с личными ключами клиентов и оплатой через Telegram Stars; трансформации в боте по умолчанию отключены (`TELEGRAM_DEMO_TRANSFORM_ENABLED=false`) — публичный бот не тратит внутренний баланс.
 
-Проверено (Python 3.14.7, macOS): **271 офлайн-тест — все зелёные** (`pytest -q` → `271 passed`, без Telegram/Stripe/LLM/Redis/Postgres; интеграционные deselect по маркеру), `ruff`/`pyflakes`/`compileall` — чисто, `make coverage` собирает отчёт, миграции применяются к чистой базе и к базам 2.0/3.0 с данными (тесты), eval fake — 60 кейсов, schema_pass 1.0. Живые проверки (Stars-оплата, `make verify-docker`, Postgres/Redis-интеграция, live LLM) не выполнялись автоматически — есть `make verify-docker`, `INTEGRATION_POSTGRES/REDIS=1` и чеклисты ([RELEASE_CHECKLIST](docs/RELEASE_CHECKLIST.md), [Stars](docs/TELEGRAM_STARS_MANUAL_CHECKLIST.md)).
+Проверено (macOS): **285 офлайн-тестов — все зелёные** (`pytest -q` → `285 passed`, без Telegram/Stripe/LLM/Redis/Postgres; интеграционные deselect по маркеру), `ruff`/`pyflakes`/`compileall` — чисто, `make coverage` собирает отчёт, миграции применяются к чистой базе и к базам 2.0/3.0 с данными (тесты), eval fake — 60 кейсов, schema_pass 1.0. Прод-проверки 3.4.0 (живой прогон через dispatcher): трансформации текста и файла за кредиты личного ключа, нажатия меню не расходуют дневной лимит, инвариант балансов сходится, пакеты/цены целы. Остаются ручные проверки — живая Stars-оплата ([чеклист](docs/TELEGRAM_STARS_MANUAL_CHECKLIST.md)) и восстановление из бэкапа; автоматика — `make verify-docker`, `INTEGRATION_POSTGRES/REDIS=1` ([RELEASE_CHECKLIST](docs/RELEASE_CHECKLIST.md)).
 
 **Статус: код готов к продакшену, живой инстанс не развёрнут.** Сервер под сервис я не арендую — это постоянные расходы, а бюджета на них сейчас нет. Всё для подъёма в репозитории (`docker compose`, миграции, бэкап-скрипт, [docs/OPERATIONS.md](docs/OPERATIONS.md)): на чистом VPS сервис поднимается за ~15–30 минут — как только появится для этого причина (клиент, заказ).
 
@@ -27,7 +27,30 @@ Production-ready B2B SaaS: API-first сервис, который принима
 
 Гарантии: ответ либо проходит схему, либо клиент получает понятную ошибку; «почти JSON» не бывает. Сырые данные не сохраняются. Стоимость известна до вызова (холд), списания всегда отражены в транзакциях.
 
-## 2. Что изменилось в 3.1 (кратко)
+## 2. Что нового в 3.2–3.4 (кратко)
+
+- **Бот как клиент (3.2)**: личные чаты открыты всем; текст и файлы
+  обрабатываются за кредиты **личного ключа** клиента (внутренний ключ —
+  только админ-фолбэк); мгновенный ack приёма файла («📥 Принял файл…»
+  до скачивания), сбой скачивания → понятная `FILE_DOWNLOAD_FAILED` вместо
+  тишины; CLI `add-credits` пишет в кредитный журнал (инвариант
+  «баланс == сумма транзакций» под регрессионным тестом).
+- **Навигация и платежка (3.3)**: главное меню reply-клавиатурой
+  (💰 Баланс / ⭐ Пополнить / 🔑 Мой ключ / ❓ Помощь) — кнопки работают
+  как алиасы команд; `/balance` показывает холды («в обработке → доступно»)
+  и дневные запросы; нехватка кредитов → inline-кнопка «⭐ Пополнить»;
+  большой результат приходит файлом **следующим сообщением**; переписаны
+  `/start` и `/help`.
+- **Цены Stars (3.3.1)**: утверждены вместо плейсхолдеров (starter 500 кр =
+  ⭐99, pro 2000 кр = ⭐199, growth 6000 кр = ⭐899); смена env — через
+  `up -d` (recreate), `restart` не перечитывает `.env`.
+- **Финальный аудит (3.4)**: кнопки меню больше не съедают дневной лимит
+  (считают только хендлеры трансформаций); кап стоимости поднят до 120
+  кредитов — документы до ~50k символов проходят; меню и команды сбрасывают
+  висящее FSM-состояние; fallback молчит в группах; бэкапы прод-БД по cron
+  (`scripts/backup_prod.sh`: pg_dump → gzip, ротация 14 дней).
+
+## 2b. История: 3.1
 
 - **Публичный бот без бесплатных трансформаций**: `TELEGRAM_DEMO_TRANSFORM_ENABLED=false`
   по умолчанию — бот подсказывает REST API, файлы не обрабатывает, внутренний
@@ -78,7 +101,7 @@ Production-ready B2B SaaS: API-first сервис, который принима
   мягкий pip-audit), `scripts/verify_docker.sh`, `.env.example` без Stripe.
 - **Eval**: 60 кейсов (нормализация дат/денег/телефонов, инъекции,
   противоречия, пропуски), метрика `numeric_accuracy_rate`.
-- Полный список: [docs/CHANGELOG.md](docs/CHANGELOG.md) (3.0.0).
+- Полный список: [docs/CHANGELOG.md](docs/CHANGELOG.md) (3.0.0 → 3.4.0).
 
 ## 2d. История: 2.0
 
@@ -120,7 +143,7 @@ perfect-json/
 │   ├── bot/                 # aiogram 3: доступ, антфлуд, дневной лимит
 │   └── eval/                # датасеты + раннер качества
 ├── migrations/              # Alembic: 0001 baseline + 0002 commercial
-├── tests/                   # 271 офлайн-тест (включая конкурентность биллинга)
+├── tests/                   # 285 офлайн-тестов (включая конкурентность биллинга)
 ├── scripts/                 # backup_postgres.sh, healthcheck.py, load_test.py
 ├── docs/                    # 13 документов + nginx-example.conf
 ├── Dockerfile, docker-compose.yml, docker-compose.dev.yml, Makefile
@@ -136,7 +159,7 @@ pip install -r requirements.txt -r requirements-dev.txt
 
 cp .env.example .env
 make migrate          # alembic upgrade head (SQLite-файл по умолчанию)
-pytest -q             # 271 passed — без сети и внешних ключей
+pytest -q             # 285 passed — без сети и внешних ключей
 
 make run-api          # uvicorn app.api.main:app --reload → :8000/docs
 python -m app.cli create-api-key --name demo --credits 100
@@ -247,7 +270,7 @@ curl -s http://127.0.0.1:8000/v1/transform -H "X-API-Key: $KEY" \
 `FakeSink`. Ни сети, ни LLM/Telegram/Stripe/Redis/SMTP/Postgres/ClamAV.
 
 ```bash
-pytest -q          # 271 passed (offline; интеграционные сняты маркером)
+pytest -q          # 285 passed (offline; интеграционные сняты маркером)
 make coverage      # отчёт покрытия (COVERAGE_FAIL_BELOW=N — опциональный порог)
 make lint          # ruff + pyflakes + compileall
 make eval-fake     # eval-отчёт по 60 кейсам (офлайн)
@@ -281,7 +304,7 @@ INTEGRATION_POSTGRES=1 INTEGRATION_REDIS=1 pytest tests/integration -q -m integr
 | 502/504 `llm_unavailable`/`llm_timeout` | провайдер недоступен после ретрая и fallback | проверить провайдера; настроить `LLM_FALLBACK_*` |
 | Метки кредитов «не сходятся» | — | проверка инварианта в [scripts/restore_instructions.md](scripts/restore_instructions.md) |
 
-## Принятые допущения (актуально для 3.1.0)
+## Принятые допущения (актуально для 3.4.0)
 
 - Холды имеют авто-экспирацию: TTL + heartbeat живого запроса + фоновый
   reaper (docs/OPERATIONS.md).
@@ -294,8 +317,8 @@ INTEGRATION_POSTGRES=1 INTEGRATION_REDIS=1 pytest tests/integration -q -m integr
   production включение не стартует без аварийного флага.
 - STT использует `LLM_BASE_URL`; секрет вебхука хранится для подписи;
   один consumer задач; метрики бота живут в процессе бота.
-- Цены пакетов Stars — редактируемые плейсхолдеры; production требует
-  `TELEGRAM_STARS_PRICES_CONFIRMED=true`.
+- Цены пакетов Stars утверждены (3.3.1); гвард `TELEGRAM_STARS_PRICES_CONFIRMED=true`
+  в production остаётся обязательным.
 - Исторические допущения ранних версий — в [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Безопасность и приватность
